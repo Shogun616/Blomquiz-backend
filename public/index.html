@@ -7,8 +7,26 @@
 <body>
 <div id="root">
     <ul>
-        <li v-for="flo in flowers">{{ flo.name }} {{ flo.level }}</li>
+        <li v-for="flower in flowers">{{ flower.name }} {{ flower.level }} {{flower.questionNumber}} </li>
     </ul>
+
+    <img src='img/blasippa.jpg' alt="">
+
+    <div>
+
+        {{flowers[0].name}}
+        <form>
+            <input type="radio" value="{{flower.questionNumber}}" name="answer">
+            <input type="radio" value="variable" name="answer">
+            <input type="radio" value="variable" name="answer">
+            <input type="submit" value="Submit">
+        </form>
+
+        <button v-on:click="getAlternatives">Start</button>
+        {{alt1}}
+        {{alt2}}
+        {{alt3}}
+    </div>
 
 </div>
 
@@ -19,7 +37,13 @@
     var app = new Vue({
         el: '#root',
         data: {
-            flowers: []
+            index: 0,
+            flowers: [],
+            alt1: "",
+            alt2: "",
+            alt3: "",
+            answer: ""
+
         },
         mounted(){
             fetch('http://127.0.0.1:3000/api/flower/')
@@ -30,6 +54,23 @@
 
                     this.flowers = data.flower;
                 });
+        },
+        methods:{
+            getFlower(){
+                return this.flowers[1].name
+            },
+            getAlternatives(){
+                this.alt1 = this.flowers[Math.floor(Math.random() * 10)+1].name
+                this.alt2 = this.flowers[Math.floor(Math.random() * 10)+1].name
+                this.alt3 = this.flowers[this.index++].name
+                if(this.alt1===this.alt2 || this.alt1 === this.alt3 || this.alt2 === this.alt3){
+                    this.index--
+                    this.getAlternatives()
+                }
+                this.answer = this.alt3
+
+            }
+
         }
     })
 
