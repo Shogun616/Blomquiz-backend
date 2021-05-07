@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="root">
+    <ul>
+        <li v-for="flo in flowers">{{ flo.name }} {{ flo.level }}</li>
+    </ul>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script>
+    var app = new Vue({
+        el: '#root',
+        data: {
+            flowers: []
+        },
+        mounted(){
+            fetch('http://127.0.0.1:3000/api/flower/')
+                .then((response) => {
+                    return response.json();
+                })
+                .then((data) => {
+
+                    this.flowers = data.flower;
+                });
+        }
+    })
+
+</script>
+</body>
+</html>
