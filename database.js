@@ -32,7 +32,7 @@ let db = new sqlite3.Database(DBSOURCE, (err) => {
                 db.run(insert, ['Tulpan', '', 'tulpan.jpg', 1])
                 db.run(insert, ['Hyacint', '', 'hyacint.jpg', 1])
                 db.run(insert, ['Präskrage', '', 'prastkrage.jpg', 1])
-                db.run(insert, ['Gullviva', '', 'gullviva.jpg', 1])
+                db.run(insert, ['Gullviva', '', 'gullviva.jpg', 2])
 
 
 
