@@ -22,8 +22,8 @@ let db = new sqlite3.Database(DBSOURCE, (err) => {
             } else {
                 //table just created, creating some rows
                 var insert = 'INSERT INTO flowers (name, info, url, level, questionNumber) VALUES (?,?,?,?,?)'
-                db.run(insert, ['Tussilago', '', 'Tussilago.png', 1, 1])
 
+                db.run(insert, ['Tussilago', '', 'Tussilago.png', 1, 1])
                 db.run(insert, ['Blåsippa', '', 'Blasippa.jpg', 1, 2])
                 db.run(insert, ['Vitsippa', '', 'vitsippa.jpg', 1, 3])
                 db.run(insert, ['Krokus', '', 'krokus.jpg', 1, 4])
