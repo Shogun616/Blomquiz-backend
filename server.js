@@ -17,7 +17,7 @@ app.listen(HTTP_PORT, () => {
     console.log("Server running on port",HTTP_PORT)
 });
 app.get("/api/flower", (req, res, next) => {
-    var sql = "select * from flowers"
+    var sql = "select * from flowers ORDER BY level, questionNumber"
     var params = []
     db.all(sql, params, (err, rows) => {
 
