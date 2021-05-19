@@ -2,6 +2,7 @@ var express = require("express")
 var app = express()
 var cors = require('cors')
 var db = require("./database.js")
+var usersdb = require("./userdb.js")
 
 app.use(cors())
 app.use(express.static('public'))
@@ -32,8 +33,40 @@ app.get("/api/flower", (req, res, next) => {
     });
 });
 
+app.get("/api/users", (req, res, next) => {
+    var sql = "select * from users"
+    var params = []
+    usersdb.all(sql, params, (err, rows) => {
+
+        if (err) {
+            res.status(400).json({"error":err.message});
+            return;
+        }
+        res.json({
+            "message":"success",
+            "users":rows
+        })
+    });
+});
+
+
+
+
+app.get("/api/insert/users/:epost", (req, res, next) => {
+
+    usersdb.run(`INSERT INTO users(email, result, level) VALUES (?,?,?)`,[req.params.epost,0,1], function(err) {
+    if (err) {
+        return console.log(err.message);
+    }
+    // get the last insert id
+    console.log(`A row has been inserted with rowid ${this.lastID}`);
+        res.json({"message":"Ok"})
+});
+
 
 // Root path
 app.get("/", (req, res, next) => {
     res.json({"message":"Ok"})
+});
+
 });
