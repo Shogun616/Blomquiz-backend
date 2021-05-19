@@ -49,10 +49,25 @@ app.get("/api/users", (req, res, next) => {
     });
 });
 
+app.get("/api/user/:epost", (req, res, next) => {
+    var sql = "select * from users where email=?"
+    var params = [req.params.epost]
+    usersdb.all(sql, params, (err, rows) => {
+
+        if (err) {
+            res.status(400).json({"error":err.message});
+            return;
+        }
+        res.json({
+            "message":"success",
+            "user":rows
+        })
+    });
+});
 
 
 
-app.get("/api/insert/users/:epost", (req, res, next) => {
+app.get("/api/users/:epost", (req, res, next) => {
 
     usersdb.run(`INSERT INTO users(email, result, level) VALUES (?,?,?)`,[req.params.epost,0,1], function(err) {
     if (err) {
@@ -62,6 +77,11 @@ app.get("/api/insert/users/:epost", (req, res, next) => {
     console.log(`A row has been inserted with rowid ${this.lastID}`);
         res.json({"message":"Ok"})
 });
+
+
+
+
+
 
 
 // Root path

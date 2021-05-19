@@ -13,7 +13,10 @@
 
     {{answer}}
 
+   kolla {{activUser[0]}}
+
     <ul>
+
 <!--        <li v-for="flower in flowers">{{ flower.name }} {{ flower.level }} {{flower.questionNumber}} {{flower.id}} <img :src="'img/' + flower.url" alt="" style="width: 100px"></li>-->
     </ul>
 
@@ -34,7 +37,6 @@
 
         <button v-on:click="getAlternatives">Start</button>
 
-
     </div>
 
 </div>
@@ -45,8 +47,10 @@
     <input type="submit" value="Submit">
 </form>
 <button onclick="singIn()">SingIn</button>
-<button onclick="signUp()">SingUp</button>
+<button onclick="signUp()" >SingUp</button>
 <button onclick="testinlog()">Test</button>
+
+
 
 
 
@@ -90,7 +94,10 @@ function singIn() {
         }
         console.log(error);
         document.getElementById('quickstart-sign-in').disabled = false;
+
+
     });
+
 }
 function signUp() {
     alert("signUp");
@@ -100,7 +107,7 @@ function signUp() {
         // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
-        if (errorCode == 'auth/weak-password') {
+        if (errorCode === 'auth/weak-password') {
             alert('The password is too weak.');
         } else {
             alert(errorMessage);
@@ -110,8 +117,15 @@ function signUp() {
 
     });
 
-    window.location =  'http://localhost:3000/api/insert/users/'+email;
+
+
+    callUrl(email);
 }
+
+function callUrl(email) {
+    window.location = 'http://localhost:3000/api/users/' + email;
+}
+
 function testinlog() {
     firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
@@ -141,6 +155,7 @@ function testinlog() {
             answer: "",
             alt: [],
             image: "",
+            activUser: ["1"]
 
         },
         mounted(){
@@ -152,7 +167,7 @@ function testinlog() {
 
                     this.flowers = data.flower;
 
-                });
+                })
         },
         methods:{
             getFlower(){
@@ -203,7 +218,7 @@ function testinlog() {
                 else{
                     alert("f" + "s " + this.select  + " a" + this.answer);
                 }
-            }
+            },
 
         }
     })
