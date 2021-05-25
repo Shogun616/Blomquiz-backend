@@ -9,35 +9,136 @@
 
 
     <button v-on:click="flowers.sort(compare)">Sort</button>
+
+
+    {{answer}}
+
+   kolla {{activUser[0]}}
+
     <ul>
-        <li v-for="flower in flowers">{{ flower.name }} {{ flower.level }} {{flower.questionNumber}} {{flower.id}} <img :src="'img/' + flower.url" alt="" style="width: 100px"></li>
+
+<!--        <li v-for="flower in flowers">{{ flower.name }} {{ flower.level }} {{flower.questionNumber}} {{flower.id}} <img :src="'img/' + flower.url" alt="" style="width: 100px"></li>-->
     </ul>
 
 
 
-    <img src='img/blasippa.jpg' alt="">
-
     <div>
 
 
-        <form>
-            <label>{{answer}}</label>
-            <input type="radio" value="{{answer}}" name="answer">
-            <label>{{alt1}}</label>
-            <input type="radio" value="{{alt1}}" name="alt1">
-            <label>{{alt2}}</label>
-            <input type="radio" value="{{alt2}}" name="alt2">
+        <form v-on:submit.prevent="checkAnswer">
+            <label>{{alt[0]}}</label>
+            <input type="radio" :value="alt[0]" name="answer" v-model="select">
+            <label>{{alt[1]}}</label>
+            <input type="radio" :value="alt[1]" name="alt1" v-model="select">
+            <label>{{alt[2]}}</label>
+            <input type="radio" :value="alt[2]" name="alt2" v-model="select">
             <input type="submit" value="Submit">
         </form>
 
         <button v-on:click="getAlternatives">Start</button>
 
-
     </div>
 
 </div>
 
+<form>
+    <input type="text" id="email" name="email" placeholder="Email">
+    <input type="password" id="password" name="password" placeholder="Password">
+    <input type="submit" value="Submit">
+</form>
+<button onclick="singIn()">SingIn</button>
+<button onclick="signUp()" >SingUp</button>
+<button onclick="testinlog()">Test</button>
 
+
+
+
+
+
+
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+<script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyAS2ZgyT42b9Ff0DUXVbKlyOGhJFe9dYNs",
+        authDomain: "blomauth.firebaseapp.com",
+        projectId: "blomauth",
+        storageBucket: "blomauth.appspot.com",
+        messagingSenderId: "42113241521",
+        appId: "1:42113241521:web:ecda05d5dc7be808b2ad90"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+</script>
+<script type="text/javascript">
+var loginUser ="";
+function singIn() {
+    alert("signIn");
+    var email = document.getElementById('email').value;
+    var password = document.getElementById('password').value;
+    firebase.auth().signInWithEmailAndPassword(email, password).catch(function (error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        if (errorCode === 'auth/wrong-password') {
+            alert('Wrong password.');
+        } else {
+            alert(errorMessage);
+        }
+        console.log(error);
+        document.getElementById('quickstart-sign-in').disabled = false;
+
+
+    });
+
+}
+function signUp() {
+    alert("signUp");
+    var email = document.getElementById('email').value;
+    var password = document.getElementById('password').value;
+    firebase.auth().createUserWithEmailAndPassword(email, password).catch(function (error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        if (errorCode === 'auth/weak-password') {
+            alert('The password is too weak.');
+        } else {
+            alert(errorMessage);
+        }
+        console.log(error);
+
+
+    });
+
+
+
+    callUrl(email);
+}
+
+function callUrl(email) {
+    window.location = 'http://localhost:3000/api/users/' + email;
+}
+
+function testinlog() {
+    firebase.auth().onAuthStateChanged(function (user) {
+        if (user) {
+
+          loginUser = (user.email);
+
+        } else {
+
+            alert("fel")
+        }
+    });
+}
+</script>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
 <script>
@@ -46,10 +147,15 @@
         data: {
             question: 0,
             level: 1,
+            select:'',
+            selected: [],
             flowers: [],
             alt1: "",
             alt2: "",
             answer: "",
+            alt: [],
+            image: "",
+            activUser: ["1"]
 
         },
         mounted(){
@@ -61,7 +167,7 @@
 
                     this.flowers = data.flower;
 
-                });
+                })
         },
         methods:{
             getFlower(){
@@ -71,13 +177,18 @@
 
                 if(this.flowers[this.question].level === this.level){
                     this.answer = this.flowers[this.question].name
-
+                    this.image= this.flowers[this.question].url;
                     this.alt1 = this.flowers[Math.floor(Math.random() * 10 * this.level)+1].name
                     this.alt2 = this.flowers[Math.floor(Math.random() * 10 * this.level)+1].name
 
                     if(this.alt1===this.alt2 || this.alt1 === this.answer || this.alt2 === this.answer){
+
                         this.getAlternatives()
                     }else{
+                        this.alt[0]=this.alt1;
+                        this.alt[1]=this.alt2;
+                        this.alt[2]=this.answer;
+
                         this.question++
                     }
                 }else {
@@ -85,18 +196,29 @@
                     this.getAlternatives()
                 }
 
-
+                this.alt.sort()
             },
             compare(a,b){
                 if(a.level < b.level){
                     return -1;
+
                 }
                 if(a.level > b.level){
                     return 1;
                 }
                 return 0;
 
-            }
+            },
+            checkAnswer:function (){
+                this.selected.push(this.select)
+                if(this.select === this.answer){
+               alert("r" );
+
+                }
+                else{
+                    alert("f" + "s " + this.select  + " a" + this.answer);
+                }
+            },
 
         }
     })
