@@ -44,7 +44,7 @@ app.get("/api/users", (req, res, next) => {
         }
         res.json({
             "message":"success",
-            "users":rows
+            "user":rows
         })
     });
 });
@@ -67,20 +67,34 @@ app.get("/api/user/:epost", (req, res, next) => {
 
 
 
-app.get("/api/users/:epost", (req, res, next) => {
+app.post("/api/users/:email", (req, res, next) => {
 
-    usersdb.run(`INSERT INTO users(email, result, level) VALUES (?,?,?)`,[req.params.epost,0,1], function(err) {
-    if (err) {
-        return console.log(err.message);
-    }
-    // get the last insert id
-    console.log(`A row has been inserted with rowid ${this.lastID}`);
-        res.json({"message":"Ok"})
+
+    usersdb.run(`INSERT INTO users(email, result, level) VALUES (?,?,?)`, [req.params.email, 0, 1], function (err) {
+        if (err) {
+            return console.log(err.message);
+        }
+        // get the last insert id
+        console.log(`A row has been inserted with row id ${this.lastID}`);
+        res.json({"message": "Ok"})
+    });
 });
 
+    app.patch("/api/users/:email/:level/:result", (req, res, next) => {
+
+        var user_name = req.params.email;
+        usersdb.run(`UPDATE users SET level = ?, result = ? WHERE email=?`,[req.params.level,req.params.result,req.params.email], function(err) {
 
 
+            if (err) {
+                return console.log(err.message);
+            }
+            // get the last insert id
+            console.log(`A row has been inserted with row id ${this.lastID}`);
+            res.json({"message":"Ok"})
+        });
 
+    });
 
 
 
@@ -89,4 +103,3 @@ app.get("/", (req, res, next) => {
     res.json({"message":"Ok"})
 });
 
-});
