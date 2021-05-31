@@ -65,8 +65,6 @@ app.get("/api/user/:epost", (req, res, next) => {
     });
 });
 
-
-
 app.post("/api/users/:email", (req, res, next) => {
 
 
@@ -96,10 +94,7 @@ app.post("/api/users/:email", (req, res, next) => {
 
     });
 
-
-
 // Root path
 app.get("/", (req, res, next) => {
     res.json({"message":"Ok"})
 });
-
